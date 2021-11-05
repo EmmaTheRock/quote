@@ -2,7 +2,6 @@
 provides quotes related to shipping
 
 TODO:
-* commit this (single class hierarchy)
 * rework this as a single class with state patterns for the inherited variables
 * some variables naturally fit into shipment and some do not. might need another class other than shipment
 * for the state classes, might want to use VALUE OBJECTS (multiple shipments can access and use the same quote object
