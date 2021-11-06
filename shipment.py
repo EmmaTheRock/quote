@@ -3,7 +3,16 @@ Sending a shipment anywhere in the world: quoting and then shipping the package.
 """
 
 import random
-from datetime import date
+from datetime import date, timedelta
+
+URGENCY_TIMEFRAME = 5
+URGENCY_TIMEFRAME = timedelta(days=URGENCY_TIMEFRAME)
+
+AIR_COST_PER_KG = 10
+AIR_COST_PER_CUBIC_M = 20
+TRUCK_COST_STANDARD = 25
+TRUCK_COST_URGENT = 45
+OCEAN_COST = 30
 
 
 class ShipmentProcess:
@@ -34,8 +43,13 @@ class Shipment:
             self.shipping_options.append(None)
 
     def calculate_cost(self):
-        pass
-        #todo: put air, truck, ocean costs
+        weight_cost = AIR_COST_PER_KG * self.weight
+        volume_cost = AIR_COST_PER_CUBIC_M * self.volume
+        if weight_cost >= volume_cost:
+            air_cost = weight_cost
+        else:
+            air_cost = volume_cost
+        #self.shipping_options[2]
 
 
 class ShipmentStatus:
@@ -60,16 +74,22 @@ class Shipping(ShipmentStatus):
 
 class ShipmentMode:
     def __init__(self):
-        pass
+        self.cost = None
+
+    def set_cost(self, cost):
+        self.cost = cost
 
 
 class TruckShipment(ShipmentMode):
-    pass
+    def __init__(self):
+        super().__init__()
 
 
 class OceanShipment(ShipmentMode):
-    pass
+    def __init__(self):
+        super().__init__()
 
 
 class AirShipment(ShipmentMode):
-    pass
+    def __init__(self):
+        super().__init__()
