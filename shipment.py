@@ -1,5 +1,5 @@
 """
-Sending a shipment anywhere in the world: quoting and then shipping the package.
+Sending a shipment anywhere in the world: quoting, then booking, then shipping the package.
 """
 
 import random
@@ -34,6 +34,9 @@ class Shipment:
         self.shipping_options = []
         self.shipment_mode = None
 
+    def get_status(self):
+        return self.shipment_status.get_status()
+
     def determine_shipment_options(self):
         self.shipping_options.append(TruckShipment())
         self.shipping_options.append(OceanShipment())
@@ -43,33 +46,41 @@ class Shipment:
             self.shipping_options.append(None)
 
     def calculate_cost(self):
-        weight_cost = AIR_COST_PER_KG * self.weight
-        volume_cost = AIR_COST_PER_CUBIC_M * self.volume
-        if weight_cost >= volume_cost:
-            air_cost = weight_cost
-        else:
-            air_cost = volume_cost
-        #self.shipping_options[2]
+        if self.shipping_options[2] is not None:
+            weight_cost = AIR_COST_PER_KG * self.weight
+            volume_cost = AIR_COST_PER_CUBIC_M * self.volume
+            if weight_cost >= volume_cost:
+                air_cost = weight_cost
+            else:
+                air_cost = volume_cost
+            self.shipping_options[2].set_cost(air_cost)
 
 
 class ShipmentStatus:
     def __init__(self):
         self.status_date = date.today()
+        self.status = None
+
+    def get_status(self):
+        return self.status
 
 
 class Quote(ShipmentStatus):
     def __init__(self):
         super().__init__()
+        self.status = "quote"
 
 
 class Booking(ShipmentStatus):
     def __init__(self):
         super().__init__()
+        self.status = "booking"
 
 
 class Shipping(ShipmentStatus):
     def __init__(self):
         super().__init__()
+        self.status = "shipping"
 
 
 class ShipmentMode:
@@ -93,3 +104,23 @@ class OceanShipment(ShipmentMode):
 class AirShipment(ShipmentMode):
     def __init__(self):
         super().__init__()
+
+
+def main():
+    customer_info = {
+        "name": "john",
+        "package_description": "book",
+        "is_dangerous": True,
+        "weight": 50,
+        "volume": 40,
+        "delivery_date": "10/24/21",
+        "is_international": True
+    }
+
+    shipment = Shipment(customer_info)
+    print(shipment.weight)
+    print(shipment.get_status())
+
+
+if __name__ == '__main__':
+    main()
