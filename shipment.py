@@ -3,7 +3,7 @@ Sending a shipment anywhere in the world: quoting, then booking, then shipping t
 """
 
 import random
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 URGENCY_TIMEFRAME = 5
 URGENCY_TIMEFRAME = timedelta(days=URGENCY_TIMEFRAME)
@@ -29,10 +29,27 @@ class Shipment:
         self.weight = customer_info["weight"]
         self.volume = customer_info["volume"]
         self.delivery_date = customer_info["delivery_date"]
+        self.is_urgent = None
         self.is_international = customer_info["is_international"]
         self.shipment_status = Quote()
         self.shipping_options = []
         self.shipment_mode = None
+
+    def display_info(self):
+        print("YOUR SHIPMENT\n===============")
+        print("Shipment number: ", self.shipment_number)
+        print("Customer name: ", self.customer_name)
+        print("Package description: ", self.package_description)
+        print("Dangerous: ", self.is_dangerous)
+        print("Weight: ", self.weight)
+        print("Volume: ", self.volume)
+        print("Delivery date: ", self.delivery_date)
+        print("Urgent: ", self.is_urgent)
+        print("International: ", self.is_international)
+        print("Shipment status: ", self.get_status())
+        print("Shipment options: ", [i.cost for i in self.shipping_options])
+        print("Shipment mode: ", self.shipment_mode)
+        print()
 
     def get_status(self):
         return self.shipment_status.get_status()
@@ -46,6 +63,17 @@ class Shipment:
             self.shipping_options.append(None)
 
     def calculate_cost(self):
+        # truck cost
+        if self.is_urgent is True:
+            truck_cost = TRUCK_COST_URGENT
+        else:
+            truck_cost = TRUCK_COST_STANDARD
+        self.shipping_options[0].set_cost(truck_cost)
+
+        # ocean cost
+        self.shipping_options[1].set_cost(OCEAN_COST)
+
+        # air cost
         if self.shipping_options[2] is not None:
             weight_cost = AIR_COST_PER_KG * self.weight
             volume_cost = AIR_COST_PER_CUBIC_M * self.volume
@@ -54,6 +82,15 @@ class Shipment:
             else:
                 air_cost = volume_cost
             self.shipping_options[2].set_cost(air_cost)
+
+    def determine_urgency(self):
+        formatted_date = datetime.strptime(self.delivery_date, '%m/%d/%y')
+        now = datetime.now()
+        timeframe = formatted_date - now
+        if timeframe <= URGENCY_TIMEFRAME:
+            self.is_urgent = True
+        else:
+            self.is_urgent = False
 
 
 class ShipmentStatus:
@@ -110,7 +147,7 @@ def main():
     customer_info = {
         "name": "john",
         "package_description": "book",
-        "is_dangerous": True,
+        "is_dangerous": False,
         "weight": 50,
         "volume": 40,
         "delivery_date": "10/24/21",
@@ -118,8 +155,10 @@ def main():
     }
 
     shipment = Shipment(customer_info)
-    print(shipment.weight)
-    print(shipment.get_status())
+    shipment.determine_urgency()
+    shipment.determine_shipment_options()
+    shipment.calculate_cost()
+    shipment.display_info()
 
 
 if __name__ == '__main__':
