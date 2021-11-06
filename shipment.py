@@ -21,7 +21,7 @@ class ShipmentProcess:
             if customer_info["weight"] >= 10 and customer_info["volume"] >= 125:
                 raise ValueError()
         except ValueError:
-            print("Packages can only be shipped if they weigh less than 10 kg"
+            print("Packages can only be shipped if they weigh less than 10 kg "
                   "or are smaller than 5x5x5 meters (125 cubic meters).")
         else:
             shipment = Shipment(customer_info)
@@ -166,10 +166,6 @@ def main():
         "is_international": True
     }
     shipment = ShipmentProcess(customer_info)
-    shipment.determine_urgency()
-    shipment.determine_shipment_options()
-    shipment.calculate_cost()
-    shipment.display_info()
 
     # invalid case
     customer_info = {
@@ -181,11 +177,7 @@ def main():
         "delivery_date": "10/24/21",
         "is_international": True
     }
-    shipment = Shipment(customer_info)
-    shipment.determine_urgency()
-    shipment.determine_shipment_options()
-    shipment.calculate_cost()
-    shipment.display_info()
+    shipment = ShipmentProcess(customer_info)
 
 
 if __name__ == '__main__':
