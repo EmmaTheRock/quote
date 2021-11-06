@@ -16,8 +16,19 @@ OCEAN_COST = 30
 
 
 class ShipmentProcess:
-    def __init__(self):
-        pass
+    def __init__(self, customer_info):
+        try:
+            if customer_info["weight"] >= 10 and customer_info["volume"] >= 125:
+                raise ValueError()
+        except ValueError:
+            print("Packages can only be shipped if they weigh less than 10 kg"
+                  "or are smaller than 5x5x5 meters (125 cubic meters).")
+        else:
+            shipment = Shipment(customer_info)
+            shipment.determine_urgency()
+            shipment.determine_shipment_options()
+            shipment.calculate_cost()
+            shipment.display_info()
 
 
 class Shipment:
@@ -144,6 +155,7 @@ class AirShipment(ShipmentMode):
 
 
 def main():
+    # valid case
     customer_info = {
         "name": "john",
         "package_description": "book",
@@ -153,7 +165,22 @@ def main():
         "delivery_date": "10/24/21",
         "is_international": True
     }
+    shipment = ShipmentProcess(customer_info)
+    shipment.determine_urgency()
+    shipment.determine_shipment_options()
+    shipment.calculate_cost()
+    shipment.display_info()
 
+    # invalid case
+    customer_info = {
+        "name": "mariana",
+        "package_description": "heavy machine",
+        "is_dangerous": False,
+        "weight": 50,
+        "volume": 130,
+        "delivery_date": "10/24/21",
+        "is_international": True
+    }
     shipment = Shipment(customer_info)
     shipment.determine_urgency()
     shipment.determine_shipment_options()
