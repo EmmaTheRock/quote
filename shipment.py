@@ -25,6 +25,7 @@ class ShipmentProcess:
                   "or are smaller than 5x5x5 meters (125 cubic meters).")
         else:
             shipment = Shipment(customer_info)
+            shipment.get_input()
             shipment.determine_urgency()
             shipment.determine_shipment_options()
             shipment.calculate_cost()
@@ -102,6 +103,9 @@ class Shipment:
             self.is_urgent = True
         else:
             self.is_urgent = False
+
+    def get_input(self):
+        input("Let's begin your Rapid Shipment order!\nPlease enter your name:\n")
 
 
 class ShipmentStatus:
