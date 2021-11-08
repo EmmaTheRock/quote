@@ -1,5 +1,14 @@
 """
 Sending a shipment anywhere in the world: quoting, then booking, then shipping the package.
+
+#TODO
+* automated testing
+    * look in pytest docs for how to assert that an exception occurred
+* pyscaffold
+* solicit input
+* display options properly
+* save options to csv file
+* build a menu
 """
 
 import random
@@ -17,12 +26,8 @@ OCEAN_COST = 30
 
 class ShipmentProcess:
     def __init__(self, customer_info):
-        try:
-            if customer_info["weight"] >= 10 and customer_info["volume"] >= 125:
-                raise ValueError()
-        except ValueError:
-            print("Packages can only be shipped if they weigh less than 10 kg "
-                  "or are smaller than 5x5x5 meters (125 cubic meters).")
+        if customer_info["weight"] >= 10 and customer_info["volume"] >= 125:
+            raise ValueError()
         else:
             shipment = Shipment(customer_info)
             shipment.get_input()
@@ -159,29 +164,19 @@ class AirShipment(ShipmentMode):
 
 
 def main():
-    # valid case
     customer_info = {
         "name": "john",
         "package_description": "book",
         "is_dangerous": False,
         "weight": 50,
-        "volume": 40,
-        "delivery_date": "10/24/21",
-        "is_international": True
-    }
-    shipment = ShipmentProcess(customer_info)
-
-    # invalid case
-    customer_info = {
-        "name": "mariana",
-        "package_description": "heavy machine",
-        "is_dangerous": False,
-        "weight": 50,
         "volume": 130,
-        "delivery_date": "10/24/21",
+        "delivery_date": "12/24/21",
         "is_international": True
     }
-    shipment = ShipmentProcess(customer_info)
+    try:
+        my_shipment_process = ShipmentProcess(customer_info)
+    except ValueError:
+        print("Oops, failed to create shipment process")
 
 
 if __name__ == '__main__':
